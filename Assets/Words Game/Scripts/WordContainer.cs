@@ -8,14 +8,23 @@ public class WordContainer : MonoBehaviour
     [Header("Elements")]
     private LetterContainer[] letterContainers;
 
+    [Header("Setting")]
+    private int currentLetterIndex;
+
+
+    private void Awake()
+    {
+        letterContainers = GetComponentsInChildren<LetterContainer>();
+        //Initialize();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        letterContainers = GetComponentsInChildren<LetterContainer>();
-        Initialize();
+
     }
 
-    private void Initialize()
+    public void Initialize()
     {
         for (int i = 0; i < letterContainers.Length; i++)
         {
@@ -26,6 +35,38 @@ public class WordContainer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+    }
+
+    public void Add(char letter)
+    {
+        letterContainers[currentLetterIndex].SetLetter(letter);
+        currentLetterIndex++;
+    }
+
+    public bool IsComplete()
+    {
+        return currentLetterIndex >= 5;
+    }
+
+    public string GetWord()
+    {
+        string word = "";
+        for (int i = 0; i < letterContainers.Length; i++)
+        {
+            word += letterContainers[i].GetLetter().ToString();
+        }
+        return word;
+    }
+
+    public void RemoveLetter()
+    {
+        if (currentLetterIndex <= 0)
+        {
+            return;
+        }
         
+        currentLetterIndex--;
+        letterContainers[currentLetterIndex].Initialize();
     }
 }
