@@ -63,6 +63,8 @@
     <Compile Include="Assets\Words Game\Scripts\LetterContainer.cs" />
     <Compile Include="Assets\Words Game\Scripts\WordManager.cs" />
     <Compile Include="Assets\Words Game\Scripts\GameManager.cs" />
+    <Compile Include="Assets\Words Game\Scripts\UIManager.cs" />
+    <Compile Include="Assets\Words Game\Scripts\DataManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Words Game\TextMesh Pro\Shaders\TMPro.cginc" />

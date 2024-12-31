@@ -55,7 +55,11 @@ public class InputManager : MonoBehaviour
 
     }
 
+    private void OnDestroy()
+    {
+        KeyboardKey.onKeyPressed -= KeyPressCallback;
 
+    }
     private void Initialize()
     {
         for (int i = 0; i < wordContainers.Length; i++)
@@ -76,6 +80,7 @@ public class InputManager : MonoBehaviour
 
         if (wordToCheck == secretWord)
         {
+            SetLevelComplete();
             Debug.Log("Afarin");
         }
         else
@@ -86,6 +91,11 @@ public class InputManager : MonoBehaviour
 
         currentWorkContainerIndex++;
         }
+    }
+
+    private void SetLevelComplete()
+    {
+        GameManager.Instance.SetGameState(GameState.LevelComplete);
     }
 
     public void BackSpacePressedCallBack()

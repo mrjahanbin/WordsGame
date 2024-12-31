@@ -19,10 +19,10 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
 
     [Header("Setting")]
-    private GameState gameState;
+    public GameState gameState;
     
     [Header("Events")]
-    private static Action<GameState> OnGameStateChanged;
+    public static Action<GameState> OnGameStateChanged;
 
 
     private void Awake()
