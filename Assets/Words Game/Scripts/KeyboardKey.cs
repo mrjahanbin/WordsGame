@@ -5,10 +5,19 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+
+public enum Validity
+{
+    None,Valid,Potential,Invalid
+}
 public class KeyboardKey : MonoBehaviour
 {
     [Header("Elements")]
+    [SerializeField] private Image renderers;
     [SerializeField] private TextMeshProUGUI letterText;
+
+    [Header("Setting")]
+    private Validity validity;
 
     [Header("Events")]
     public static Action<char> onKeyPressed;
@@ -29,8 +38,44 @@ public class KeyboardKey : MonoBehaviour
 
     }
     
-    private char GetLetter()
+    public char GetLetter()
     {
         return letterText.text[0];
+    }
+
+    public void Initialize()
+    {
+        renderers.color = Color.white;
+        validity = Validity.None;
+    }
+
+    public void SetValid()
+    {
+        renderers.color = Color.green;
+        validity = Validity.Valid;
+    }
+
+    public void SetPotential()
+    {
+        if (validity == Validity.Valid)
+        {
+            return;
+        }
+        renderers.color = Color.yellow;
+        validity = Validity.Potential;
+
+
+    }
+
+    public void SetInValid()
+    {
+        if (validity == Validity.Valid || validity == Validity.Potential)
+        {
+            return;
+        }
+
+        renderers.color = Color.gray;
+        validity = Validity.Invalid;
+
     }
 }

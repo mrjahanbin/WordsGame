@@ -73,6 +73,7 @@ public class InputManager : MonoBehaviour
         keyboardColorizer.Colorize(secretWord, wordToCheck);
 
 
+
         if (wordToCheck == secretWord)
         {
             Debug.Log("Afarin");

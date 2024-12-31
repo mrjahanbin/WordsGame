@@ -136,6 +136,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d3164bfe0561414097f45438063b17b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  renderers: {fileID: 254988834142501792}
   letterText: {fileID: 4947011003489178769}
 --- !u!114 &9017479709182043984
 MonoBehaviour:
