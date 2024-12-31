@@ -8,6 +8,7 @@ public class LetterContainer : MonoBehaviour
 {
 
     [Header("Elements")]
+    [SerializeField] private SpriteRenderer letterContainers;
     [SerializeField] private TextMeshPro letter;
 
     // Start is called before the first frame update
@@ -25,6 +26,7 @@ public class LetterContainer : MonoBehaviour
     public void Initialize()
     {
         letter.text = "";
+        letterContainers.color = Color.white;
     }
 
     public void SetLetter(char letter)
@@ -35,5 +37,20 @@ public class LetterContainer : MonoBehaviour
     public char GetLetter()
     {
         return letter.text[0];
+    }
+
+    public void SetValid()
+    {
+        letterContainers.color = Color.green;
+    }
+    
+    public void SetPotential()
+    {
+        letterContainers.color = Color.yellow;
+    }
+
+    public void SetInValid()
+    {
+        letterContainers.color = Color.gray;
     }
 }

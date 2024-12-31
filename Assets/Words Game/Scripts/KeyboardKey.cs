@@ -28,4 +28,9 @@ public class KeyboardKey : MonoBehaviour
     {
 
     }
+    
+    private char GetLetter()
+    {
+        return letterText.text[0];
+    }
 }

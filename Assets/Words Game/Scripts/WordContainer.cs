@@ -59,14 +59,39 @@ public class WordContainer : MonoBehaviour
         return word;
     }
 
-    public void RemoveLetter()
+    public bool RemoveLetter()
     {
         if (currentLetterIndex <= 0)
         {
-            return;
+            return false;
         }
         
         currentLetterIndex--;
         letterContainers[currentLetterIndex].Initialize();
+
+        return true;
+    } 
+    
+    public void Colorize(string secretWord)
+    {
+        List<char> Chars = new List<char>(secretWord.ToCharArray());
+
+        for (int i = 0; i < letterContainers.Length; i++)
+        {
+            char letterToCheck = letterContainers[i].GetLetter();
+            if (letterToCheck == secretWord[i])
+            {
+                letterContainers[i].SetValid();
+                Chars.Remove(letterToCheck);
+            }
+            else if (Chars.Contains(letterToCheck))
+            {
+                letterContainers[i].SetPotential();
+                Chars.Remove(letterToCheck);
+            }
+            else { 
+                letterContainers[i].SetInValid();
+            }
+        }
     }
 }

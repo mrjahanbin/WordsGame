@@ -2,12 +2,16 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InputManager : MonoBehaviour
 {
 
     [Header("Elements")]
     [SerializeField] private WordContainer[] wordContainers;
+    [SerializeField] private Button tryButton;
+    [SerializeField] private KeyboardColorizer keyboardColorizer;
+
 
 
 
@@ -23,6 +27,7 @@ public class InputManager : MonoBehaviour
     {
         Initialize();
         KeyboardKey.onKeyPressed += KeyPressCallback;
+        DesableTryButton();
     }
 
     private void KeyPressCallback(char letter)
@@ -38,6 +43,7 @@ public class InputManager : MonoBehaviour
         if (wordContainers[currentWorkContainerIndex].IsComplete())
         {
             canAddLetter = false;
+            EnableTryButton();
             //currentWorkContainerIndex++;
             //WordToCheck();
         }
@@ -63,6 +69,10 @@ public class InputManager : MonoBehaviour
         string wordToCheck = wordContainers[currentWorkContainerIndex].GetWord();
         string secretWord = WordManager.Instance.GetSecretWord();
 
+        wordContainers[currentWorkContainerIndex].Colorize(secretWord);
+        keyboardColorizer.Colorize(secretWord, wordToCheck);
+
+
         if (wordToCheck == secretWord)
         {
             Debug.Log("Afarin");
@@ -71,6 +81,7 @@ public class InputManager : MonoBehaviour
         {
             Debug.Log("Ghalate");
             canAddLetter = true;
+            DesableTryButton();
 
         currentWorkContainerIndex++;
         }
@@ -78,7 +89,19 @@ public class InputManager : MonoBehaviour
 
     public void BackSpacePressedCallBack()
     {
-        wordContainers[currentWorkContainerIndex].RemoveLetter();
+       bool removeLetter = wordContainers[currentWorkContainerIndex].RemoveLetter();
+
+        if (removeLetter) { 
+            DesableTryButton();
+        }
         canAddLetter = true;
+    }
+    public void EnableTryButton()
+    {
+        tryButton.interactable = true;
+    }
+    public void DesableTryButton()
+    {
+        tryButton.interactable = false;
     }
 }
