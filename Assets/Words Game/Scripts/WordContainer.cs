@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class WordContainer : MonoBehaviour
 {
+    public static WordContainer Instance;
     [Header("Elements")]
     private LetterContainer[] letterContainers;
 
@@ -14,8 +15,15 @@ public class WordContainer : MonoBehaviour
 
     private void Awake()
     {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(Instance);
+        }
         letterContainers = GetComponentsInChildren<LetterContainer>();
-        //Initialize();
     }
 
     // Start is called before the first frame update
@@ -26,6 +34,8 @@ public class WordContainer : MonoBehaviour
 
     public void Initialize()
     {
+        currentLetterIndex = 0;
+
         for (int i = 0; i < letterContainers.Length; i++)
         {
             letterContainers[i].Initialize();
@@ -65,13 +75,13 @@ public class WordContainer : MonoBehaviour
         {
             return false;
         }
-        
+
         currentLetterIndex--;
         letterContainers[currentLetterIndex].Initialize();
 
         return true;
-    } 
-    
+    }
+
     public void Colorize(string secretWord)
     {
         List<char> Chars = new List<char>(secretWord.ToCharArray());
@@ -89,9 +99,15 @@ public class WordContainer : MonoBehaviour
                 letterContainers[i].SetPotential();
                 Chars.Remove(letterToCheck);
             }
-            else { 
+            else
+            {
                 letterContainers[i].SetInValid();
             }
         }
+    }
+
+    public void AddAsHint(int letterIndex, char letter)
+    {
+        letterContainers[letterIndex].SetLetter(letter, true);
     }
 }

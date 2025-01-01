@@ -7,16 +7,25 @@ using UnityEngine.UI;
 public class InputManager : MonoBehaviour
 {
 
+    public static InputManager instance;
+
     [Header("Elements")]
-    [SerializeField] private WordContainer[] wordContainers;
+    [SerializeField] public WordContainer[] wordContainers;
     [SerializeField] private Button tryButton;
     [SerializeField] private KeyboardColorizer keyboardColorizer;
 
-
-
-
     [Header("Setting")]
-    private int currentWorkContainerIndex;
+    public int currentWorkContainerIndex;
+    public bool shouldReset;
+
+
+    private void Awake()
+    {
+        if (instance == null)
+            instance = this;
+        else
+            Destroy(instance);
+    }
 
 
     private bool canAddLetter = true;
@@ -28,6 +37,8 @@ public class InputManager : MonoBehaviour
         Initialize();
         KeyboardKey.onKeyPressed += KeyPressCallback;
         DesableTryButton();
+        GameManager.OnGameStateChanged += GameStateChangedCallback;
+
     }
 
     private void KeyPressCallback(char letter)
@@ -58,14 +69,48 @@ public class InputManager : MonoBehaviour
     private void OnDestroy()
     {
         KeyboardKey.onKeyPressed -= KeyPressCallback;
+        GameManager.OnGameStateChanged += GameStateChangedCallback;
+
 
     }
+
+    private void GameStateChangedCallback(GameState state)
+    {
+        switch (state)
+        {
+            case GameState.Menu:
+                break;
+            case GameState.Game:
+                if (shouldReset)
+                {
+                    Initialize();
+                }
+                break;
+            case GameState.LevelComplete:
+                shouldReset = true;
+                break;
+            case GameState.GameOver:
+                shouldReset = true;
+                break;
+            case GameState.Idle:
+                break;
+            default:
+                break;
+        }
+    }
+
     private void Initialize()
     {
+
+        currentWorkContainerIndex = 0;
+        canAddLetter = true;
+        DesableTryButton();
+
         for (int i = 0; i < wordContainers.Length; i++)
         {
             wordContainers[i].Initialize();
         }
+        shouldReset = false;
     }
 
     public void WordToCheck()
@@ -81,28 +126,46 @@ public class InputManager : MonoBehaviour
         if (wordToCheck == secretWord)
         {
             SetLevelComplete();
-            Debug.Log("Afarin");
         }
         else
         {
-            Debug.Log("Ghalate");
-            canAddLetter = true;
+            //Debug.Log("Ghalate");
+            currentWorkContainerIndex++;
             DesableTryButton();
 
-        currentWorkContainerIndex++;
+            if (currentWorkContainerIndex >= wordContainers.Length)
+            {
+                //Debug.Log("GameOver");
+                GameManager.Instance.SetGameState(GameState.GameOver);
+                DataManager.instance.ResetScore();
+            }
+            else
+            {
+                canAddLetter = true;
+            }
+
         }
     }
 
     private void SetLevelComplete()
     {
+        UpdateData();
         GameManager.Instance.SetGameState(GameState.LevelComplete);
+    }
+
+    private void UpdateData()
+    {
+        int scoreToAdd = 6 - currentWorkContainerIndex;
+        DataManager.instance.InceaseScore(scoreToAdd);
+        DataManager.instance.AddCoins(scoreToAdd * 2);
     }
 
     public void BackSpacePressedCallBack()
     {
-       bool removeLetter = wordContainers[currentWorkContainerIndex].RemoveLetter();
+        bool removeLetter = wordContainers[currentWorkContainerIndex].RemoveLetter();
 
-        if (removeLetter) { 
+        if (removeLetter)
+        {
             DesableTryButton();
         }
         canAddLetter = true;
@@ -114,5 +177,10 @@ public class InputManager : MonoBehaviour
     public void DesableTryButton()
     {
         tryButton.interactable = false;
+    }
+
+    public WordContainer GetCurrentWordContainer()
+    {
+        return wordContainers[currentWorkContainerIndex];
     }
 }

@@ -13,6 +13,9 @@ public class DataManager : MonoBehaviour
     private int score;
     private int bestScore;
 
+    [Header("Events")]
+    public static Action onCoinsUpdated;
+
     private void Awake()
     {
         if (instance == null)
@@ -45,11 +48,14 @@ public class DataManager : MonoBehaviour
 
     public void AddCoins(int amount)
     {
+        onCoinsUpdated?.Invoke();
         coins += amount;
         SaveData();
+        
     }
     public void RemoveCoins(int amount)
     {
+        onCoinsUpdated?.Invoke();
         coins -= amount;
         coins = Mathf.Max(coins, 0);
         SaveData();
@@ -57,11 +63,16 @@ public class DataManager : MonoBehaviour
 
     public void InceaseScore(int amount)
     {
-        score = amount;
+        score += amount;
         if (score > bestScore)
         {
             bestScore = score;
         }
+        SaveData();
+    }
+    public void ResetScore()
+    {
+        score = 0;
         SaveData();
     }
 
@@ -91,8 +102,8 @@ public class DataManager : MonoBehaviour
 
     private void SaveData()
     {
-        PlayerPrefs.GetInt("coins", coins);
-        PlayerPrefs.GetInt("score", score);
-        PlayerPrefs.GetInt("bestScore", bestScore);
+        PlayerPrefs.SetInt("coins", coins);
+        PlayerPrefs.SetInt("score", score);
+        PlayerPrefs.SetInt("bestScore", bestScore);
     }
 }

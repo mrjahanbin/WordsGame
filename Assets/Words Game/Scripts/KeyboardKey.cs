@@ -78,4 +78,9 @@ public class KeyboardKey : MonoBehaviour
         validity = Validity.Invalid;
 
     }
+
+    public bool IsUntouchedKeys()
+    {
+        return validity == Validity.None;
+    }
 }

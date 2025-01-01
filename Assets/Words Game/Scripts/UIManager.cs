@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.EditorTools;
 using UnityEngine;
 
 public class UIManager : MonoBehaviour
@@ -10,14 +11,33 @@ public class UIManager : MonoBehaviour
     public static UIManager Instance;
 
     [Header("Elements")]
+    [SerializeField] private CanvasGroup menuCG;
     [SerializeField] private CanvasGroup gameCG;
     [SerializeField] private CanvasGroup levelCompleteCG;
+    [SerializeField] private CanvasGroup gameOverCG;
+
+    [Header("Menu Elements")]
+    [SerializeField] private TextMeshProUGUI menuCoins;
+    [SerializeField] private TextMeshProUGUI menuBestScore;
+
 
     [Header("LevelCompleteEvents")]
     [SerializeField] private TextMeshProUGUI levelCompleteCoins;
     [SerializeField] private TextMeshProUGUI levelCompleteSecretWord;
     [SerializeField] private TextMeshProUGUI levelCompleteScore;
     [SerializeField] private TextMeshProUGUI levelCompleteBestScore;
+
+    [Header("GameOver Elements")]
+    [SerializeField] private TextMeshProUGUI gameOverCoins;
+    [SerializeField] private TextMeshProUGUI gameOverSecretWord;
+    [SerializeField] private TextMeshProUGUI gameOverScore;
+    [SerializeField] private TextMeshProUGUI gameOverBestScore;
+
+
+
+    [Header("Game Elements")]
+    [SerializeField] private TextMeshProUGUI gameCoins;
+    [SerializeField] private TextMeshProUGUI gameScore;
 
 
     private void Awake()
@@ -35,10 +55,27 @@ public class UIManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        ShowGame();
-        HidelevelCompleteCG();
+        ShowMenu();
+        HidelevelComplete();
         GameManager.OnGameStateChanged += GameStateChangedCallback;
 
+        DataManager.onCoinsUpdated += UpdateCoinsText;
+
+    }
+
+    private void OnDestroy()
+    {
+        GameManager.OnGameStateChanged -= GameStateChangedCallback;
+        DataManager.onCoinsUpdated -= UpdateCoinsText;
+
+    }
+
+    private void UpdateCoinsText()
+    {
+        menuCoins.text = DataManager.instance.GetCoins().ToString();
+        gameCoins.text = menuCoins.text;
+        levelCompleteCoins.text = menuCoins.text;
+        gameOverCoins.text = menuCoins.text;
     }
 
     private void GameStateChangedCallback(GameState state)
@@ -46,14 +83,23 @@ public class UIManager : MonoBehaviour
         switch (state)
         {
             case GameState.Menu:
+                HideGame();
+                ShowMenu();
                 break;
             case GameState.Game:
+                HideMenu();
+                HidelevelComplete();
+                HideGameOver();
+                ShowGame();
                 break;
             case GameState.LevelComplete:
-                ShowlevelCompleteCG();
                 HideGame();
+                HideGameOver();
+                ShowlevelComplete();
                 break;
             case GameState.GameOver:
+                HideGame();
+                ShowGameOver();
                 break;
             case GameState.Idle:
                 break;
@@ -68,14 +114,21 @@ public class UIManager : MonoBehaviour
 
     }
 
-    private void OnDestroy()
+    private void ShowMenu()
     {
-        GameManager.OnGameStateChanged -= GameStateChangedCallback;
-
+        menuCoins.text = DataManager.instance.GetCoins().ToString();
+        menuBestScore.text = DataManager.instance.GetBestScore().ToString();
+        ShowCG(menuCG);
+    }
+    private void HideMenu()
+    {
+        HideCG(menuCG);
     }
 
     private void ShowGame()
     {
+        gameCoins.text =DataManager.instance.GetCoins().ToString();
+        gameScore.text =DataManager.instance.GetScore().ToString();
         ShowCG(gameCG);
     }
     private void HideGame()
@@ -83,7 +136,7 @@ public class UIManager : MonoBehaviour
         HideCG(gameCG);
     }
 
-    private void ShowlevelCompleteCG()
+    private void ShowlevelComplete()
     {
         levelCompleteCoins.text = DataManager.instance.GetCoins().ToString();
         levelCompleteSecretWord.text = WordManager.Instance.GetSecretWord();
@@ -93,9 +146,24 @@ public class UIManager : MonoBehaviour
 
         ShowCG(levelCompleteCG);
     }
-    private void HidelevelCompleteCG()
+    private void HidelevelComplete()
     {
         HideCG(levelCompleteCG);
+    }
+
+
+    private void ShowGameOver()
+    {
+        gameOverCoins.text = DataManager.instance.GetCoins().ToString();
+        gameOverSecretWord.text = WordManager.Instance.GetSecretWord();
+        gameOverScore.text = DataManager.instance.GetScore().ToString();
+        gameOverBestScore.text = DataManager.instance.GetBestScore().ToString();
+
+        ShowCG(gameOverCG);
+    }
+    private void HideGameOver()
+    {
+        HideCG(gameOverCG);
     }
 
     private void ShowCG(CanvasGroup cg)

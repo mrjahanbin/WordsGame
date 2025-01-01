@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +9,9 @@ public class KeyboardColorizer : MonoBehaviour
     [Header("Elements")]
     private KeyboardKey[] keys;
 
+    [Header("Setting")]
+    private bool shouldReset;
+
     private void Awake()
     {
         keys = GetComponentsInChildren<KeyboardKey>();
@@ -16,7 +20,47 @@ public class KeyboardColorizer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        GameManager.OnGameStateChanged += GameStateChangedCallback;
+    }
 
+    private void OnDestroy()
+    {
+        GameManager.OnGameStateChanged -= GameStateChangedCallback;
+    }
+
+    private void GameStateChangedCallback(GameState state)
+    {
+        switch (state)
+        {
+            case GameState.Menu:
+                break;
+            case GameState.Game:
+                if (shouldReset)
+                {
+                    Initialize();
+                }
+                break;
+            case GameState.LevelComplete:
+                shouldReset = true;
+                break;
+            case GameState.GameOver:
+                shouldReset = true;
+                break;
+            case GameState.Idle:
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void Initialize()
+    {
+        for (int i = 0; i < keys.Length; i++)
+        {
+            keys[i].Initialize();
+        }
+
+        shouldReset = false;
     }
 
     // Update is called once per frame

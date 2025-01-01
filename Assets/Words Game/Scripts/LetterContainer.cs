@@ -14,13 +14,13 @@ public class LetterContainer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void Initialize()
@@ -29,8 +29,16 @@ public class LetterContainer : MonoBehaviour
         letterContainers.color = Color.white;
     }
 
-    public void SetLetter(char letter)
+    public void SetLetter(char letter, bool isHint = false)
     {
+        if (isHint)
+        {
+            this.letter.color = Color.blue;
+        }
+        else
+        {
+            this.letter.color = Color.black;
+        }
         this.letter.text = letter.ToString();
     }
 
@@ -43,7 +51,7 @@ public class LetterContainer : MonoBehaviour
     {
         letterContainers.color = Color.green;
     }
-    
+
     public void SetPotential()
     {
         letterContainers.color = Color.yellow;
